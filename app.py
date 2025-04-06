@@ -1,3 +1,7 @@
+# Room Sound Monitor app.py
+# Reads the serial port for messages from the aggregator, and via WebSockets, pushes them
+# to a p5.js sketch.
+
 import eventlet
 eventlet.monkey_patch()
 import serial
@@ -16,9 +20,8 @@ def read_microbit():
         if ser.in_waiting:
             try:
                 line = ser.readline().decode('utf-8').strip()
-                print('Read line: ' + line)
-                if line:
-                    socketio.emit('data', {'data': line})
+                print(line)
+                socketio.emit('data', {'data': line})
             except Exception as e:
                 print("Error reading line:", e)
         socketio.sleep(0.15)

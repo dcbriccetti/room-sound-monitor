@@ -19,3 +19,16 @@ to a p5.js sketch.
 
 ### sketch.js
 Visually displays the sound levels from the various samplers.
+
+## Installation
+- Use Mu to flash sound-sampler.py onto one or more micro:bits whose microphones will
+be used to monitor sound. (As of 2025-04-06, Dave Briccetti finds that the
+python.makecode.org editor uses a version of MicroPython that fails to get sound
+levels correctly after flashing, then disconnecting the USB cable, then reconnecting.)
+When the program starts, it’s in a mode where you specify which of 25 spots in the
+room (corresponding to the micro:bit’s 5 ⨉ 5 LED grid) the micro:bit will be placed in.
+Tilt the micro:bit until the light moves to the correct position, then press “A”.
+Press “A” again if you want to reset the location.
+- Flash aggregator.py onto one micro:bit, and leave it connected to a “host” (teacher)
+computer
+- Run app.py on the host computer, then go to 127.0.0.1:5000 in a Web browser.

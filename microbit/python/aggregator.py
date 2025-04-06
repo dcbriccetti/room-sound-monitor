@@ -1,3 +1,5 @@
+# Aggregator receives messages from collector micro:bits and “print”s them to a computer over USB.
+
 from microbit import *
 import radio
 
@@ -7,5 +9,5 @@ radio.config(group=1)
 while True:
     message = radio.receive_full()
     if message:
-        b, sig_str, t = message
-        print('%s,%d' % (b[3:].decode('utf8'), sig_str))
+        contents, strength, _ = message
+        print('%s,%d' % (contents[3:].decode('utf8'), strength))

@@ -32,11 +32,8 @@ radio.on()
 radio.config(group=1)
 
 while True:
-    # Toggle adjust mode on a logo touch.
-    if button_a.was_pressed():
+    if button_a.was_pressed():  # Toggle adjust mode
         adjust_mode = not adjust_mode
-        if not adjust_mode:
-            display.set_pixel(round(x), round(y), 2)
 
     # If adjust mode is on, update coordinates based on tilt.
     if adjust_mode:

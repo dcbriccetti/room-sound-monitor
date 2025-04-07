@@ -32,3 +32,5 @@ Press “A” again if you want to reset the location.
 - Flash aggregator.py onto one micro:bit, and leave it connected to a “host” (teacher)
 computer
 - Run app.py on the host computer, then go to 127.0.0.1:5000 in a Web browser.
+
+![Screen shot](screen1.png)

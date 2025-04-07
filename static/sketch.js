@@ -1,9 +1,12 @@
-let socket;
 const MAX_COLLECTED_ITEMS = 100;
 const MAX_HISTORY_ITEMS = 50;
 const LEDS_PER_ROW = 5;
 const NUM_LED_ROWS = 5;
-const LEVEL_VISUALIZATION_SCALE = 5;
+
+let socket;
+let levelVisualizationScale = 5; // Initial value, will be updated by slider
+let scaleSlider;
+let scaleValueSpan;
 
 class LevelsByIndex {
     constructor(max_elements) {
@@ -44,10 +47,21 @@ class LevelsByIndex {
 const collected = new LevelsByIndex(MAX_COLLECTED_ITEMS);
 const historical = new LevelsByIndex(MAX_HISTORY_ITEMS);
 
+function updateScale() {
+    levelVisualizationScale = scaleSlider.value();
+    scaleValueSpan.html(levelVisualizationScale.toFixed(1)); // Show one decimal place
+}
+
 function setup() {
     frameRate(10);
     const canvas = createCanvas(700, 700);
     canvas.parent('sketch-container');
+
+    scaleSlider = select('#scaleSlider');
+    scaleValueSpan = select('#scaleValue');
+    scaleSlider.value(levelVisualizationScale);
+    scaleSlider.input(updateScale);
+    scaleValueSpan.html(levelVisualizationScale);
 
     // Connect to the Flask-SocketIO server.
     socket = io.connect('http://127.0.0.1:5000');
@@ -126,7 +140,7 @@ function draw() {
             noStroke();
 
             for (let i = 0; i < numBars; i++) {
-                const barHeight = constrain(levels[i] * LEVEL_VISUALIZATION_SCALE, 0, cellHeight);
+                const barHeight = constrain(levels[i] * levelVisualizationScale, 0, cellHeight);
                 rect(x + i * barWidth, y + cellHeight - barHeight, barWidth, barHeight);
             }
         }

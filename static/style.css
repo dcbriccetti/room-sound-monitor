@@ -1,31 +1,118 @@
+/* /static/style.css */
+
+/* Base styles and Box Sizing */
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%; /* Ensure body can fill viewport height */
+    width: 100%; /* Ensure full width usage */
+    min-height: 100%; /* Use min-height for flexibility */
     font-family: Arial, Helvetica, sans-serif; /* Basic font */
     background-color: #f0f0f0; /* Light gray background for contrast */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
+/* Apply box-sizing to all elements */
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* Body layout using Flexbox for centering */
 body {
     display: flex;
-    flex-direction: column; /* Stack title and sketch vertically */
-    align-items: center; /* Center items horizontally */
-    padding-top: 20px; /* Add some space above the title */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+    padding: 20px; /* Use padding on body instead of just top */
+    width: 100%; /* Explicitly set width */
 }
 
-/* Style for the main title */
+/* Main Title Style */
 h1 {
     color: #333;
-    margin-bottom: 20px; /* Space between title and sketch */
+    margin-bottom: 20px;
+    text-align: center; /* Ensure title text is centered */
+    font-size: 2em; /* Base font size */
 }
 
-/* Container for the p5 sketch */
+/* Controls Container Styling */
+#controls {
+    margin-bottom: 20px; /* Space between controls and sketch */
+    padding: 10px;
+    background-color: #e9e9e9; /* Slightly different background */
+    border-radius: 5px;
+    display: flex; /* Arrange label, slider, value horizontally */
+    align-items: center; /* Vertically align items in the flex container */
+    gap: 10px; /* Add space between items */
+    max-width: 90%; /* Limit width */
+    flex-wrap: wrap; /* Allow items to wrap on small screens */
+    justify-content: center; /* Center items if they wrap */
+}
+
+/* Styling within Controls */
+#controls label {
+    font-weight: bold;
+}
+
+#controls input[type="range"] {
+    width: 200px; /* Give the slider a specific width */
+    cursor: pointer;
+}
+
+#controls span {
+    font-weight: bold;
+    min-width: 30px; /* Ensure space for value display */
+    text-align: right;
+}
+
+
+/* p5.js Sketch Container */
 #sketch-container {
-    /* The p5 canvas will be placed inside here */
-    /* Optional: Add a border or shadow for visual separation */
     border: 1px solid #ccc;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
-    /* Width and height will be determined by the p5 canvas */
-    /* Centering is handled by the body's flex properties */
-    line-height: 0; /* Prevents extra space below canvas sometimes caused by line-height */
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+    line-height: 0; /* Prevents extra space below canvas */
+    /* Max width prevents it from becoming too large on very wide screens, */
+    /* while allowing it to shrink */
+    max-width: 95%; /* Use percentage for flexibility */
+    /* The actual width/height will be set by the canvas via sketch.js */
+}
+
+/* --- Responsive Adjustments --- */
+
+/* Tablet Sizes and below */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+    body {
+        padding: 15px;
+    }
+    #sketch-container {
+        max-width: 95%; /* Ensure it doesn't touch edges */
+        box-shadow: 2px 2px 3px rgba(0,0,0,0.1);
+    }
+    /* Controls adjustment not strictly necessary here unless desired */
+}
+
+/* Mobile Sizes */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+    body {
+        padding: 10px;
+    }
+    #controls {
+       width: 95%; /* Adjust width */
+       padding: 8px;
+       gap: 5px;
+    }
+     #controls input[type="range"] {
+        width: 150px; /* Smaller slider on mobile */
+    }
+    #sketch-container {
+        max-width: 100%; /* Allow it to fill width on very small screens */
+        border: none; /* Remove border on smallest screens */
+        box-shadow: none; /* Remove shadow */
+    }
 }

@@ -14,14 +14,14 @@ Receives radio messages from the sound samplers and writes them to the serial po
 micro:bit running this is connected to a computer able to run full Python and a web browser.
 
 ### app.py
-Reads the serial port for messages from the aggregator, and via WebSockets, pushes them
-to a p5.js sketch.
+Reads the serial port for messages from the aggregator, and via Flask-SocketIO, pushes them
+to a p5.js sketch for display.
 
 ### sketch.js
 Visually displays the sound levels from the various samplers.
 
 ## Installation
-- Use Mu to flash sound-sampler.py onto one or more micro:bits whose microphones will
+- Use Mu (not python.makecode.org) to flash sound-sampler.py onto one or more micro:bits whose microphones will
 be used to monitor sound. (As of 2025-04-06, Dave Briccetti finds that the
 python.makecode.org editor uses a version of MicroPython that fails to get sound
 levels correctly after flashing, then disconnecting the USB cable, then reconnecting.)

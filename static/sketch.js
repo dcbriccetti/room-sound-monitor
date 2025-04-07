@@ -2,11 +2,30 @@ const MAX_COLLECTED_ITEMS = 100;
 const MAX_HISTORY_ITEMS = 50;
 const LEDS_PER_ROW = 5;
 const NUM_LED_ROWS = 5;
+const MAX_CANVAS_SIZE = 700; // Define a max size (adjust if needed)
 
 let socket;
 let levelVisualizationScale = 5; // Initial value, will be updated by slider
 let scaleSlider;
 let scaleValueSpan;
+
+// Calculates the side length for a square canvas based on window size
+function calculateCanvasSize() {
+    const padding = 30; // Total horizontal padding/margin desired
+    // Estimate vertical space needed for title, controls, padding etc.
+    const topMargin = 120; // Adjust this based on the actual height of elements above the canvas
+    const availableWidth = windowWidth - padding;
+    const availableHeight = windowHeight - topMargin;
+
+    // Determine the side length: minimum of available width, height, and max size
+    // Use floor to avoid fractional pixels
+    let side = floor(min(availableWidth, availableHeight, MAX_CANVAS_SIZE));
+
+    // Ensure a minimum size so it doesn't disappear
+    side = max(side, 100); // Minimum size of 100px (adjust as needed)
+
+    return side;
+}
 
 class LevelsByIndex {
     constructor(max_elements) {
@@ -54,7 +73,9 @@ function updateScale() {
 
 function setup() {
     frameRate(10);
-    const canvas = createCanvas(700, 700);
+
+    const initialSize = calculateCanvasSize();
+    const canvas = createCanvas(initialSize, initialSize);
     canvas.parent('sketch-container');
 
     scaleSlider = select('#scaleSlider');
@@ -108,11 +129,9 @@ function setup() {
 
 function addHistoryItem() {
     collected.forEach((levels, index) => {
-        const mean = collected.getMeanAndDeleteLevels(index);
-        historical.add(index, mean);
+        historical.add(index, collected.getMeanAndDeleteLevels(index));
     })
 }
-
 
 function draw() {
     if (frameCount % 10 === 0) {
@@ -125,7 +144,7 @@ function draw() {
 
     historical.forEach((levels, index) => {
         const col = index % LEDS_PER_ROW;
-        const row = Math.floor(index / LEDS_PER_ROW);
+        const row = floor(index / LEDS_PER_ROW);
         const x = col * cellWidth; // Cell's top-left x
         const y = row * cellHeight; // Cell's top-left y
 
@@ -144,5 +163,10 @@ function draw() {
                 rect(x + i * barWidth, y + cellHeight - barHeight, barWidth, barHeight);
             }
         }
-    })
+    });
+}
+
+function windowResized() {
+    const newSize = calculateCanvasSize();
+    resizeCanvas(newSize, newSize);
 }

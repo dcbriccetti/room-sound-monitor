@@ -47,7 +47,7 @@ def display_level(level):
     led_num = 0
     for y in range(4, -1, -1):  # bottom to top
         for x in range(5):      # left to right
-            display.set_pixel(x, y, LEVEL_BRIGHTNESS if led_num <= num_graph_leds else 0)
+            display.set_pixel(x, y, LEVEL_BRIGHTNESS if led_num < num_graph_leds else 0)
             led_num += 1
 
 def highest_level_from_multiple_samples():

@@ -1,0 +1,31 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Ensure body can fill viewport height */
+    font-family: Arial, Helvetica, sans-serif; /* Basic font */
+    background-color: #f0f0f0; /* Light gray background for contrast */
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* Stack title and sketch vertically */
+    align-items: center; /* Center items horizontally */
+    padding-top: 20px; /* Add some space above the title */
+}
+
+/* Style for the main title */
+h1 {
+    color: #333;
+    margin-bottom: 20px; /* Space between title and sketch */
+}
+
+/* Container for the p5 sketch */
+#sketch-container {
+    /* The p5 canvas will be placed inside here */
+    /* Optional: Add a border or shadow for visual separation */
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+    /* Width and height will be determined by the p5 canvas */
+    /* Centering is handled by the body's flex properties */
+    line-height: 0; /* Prevents extra space below canvas sometimes caused by line-height */
+}

@@ -13,15 +13,13 @@ function setup() {
     socket.on('data', msg => {
         const items = msg.data.split(',');
         const missing = items.some(item => item === '');
-        if (items.length === 7 && !missing) {
+        if (items.length === 4 && !missing) {
             const locX = Number(items[0]);
             const locY = Number(items[1]);
             if ([locX, locY].some(item => isNaN(item) || item < 0 || item > 4)) {
                 console.log("Bad data: " + msg.data);
             } else {
-                // Compute unique index for the grid cell.
-                let idx = locX + locY * LEDS_PER_ROW;
-                maxes[idx] = Number(items[5]);
+                maxes[locX + locY * LEDS_PER_ROW] = Number(items[2]);
             }
         } else {
             console.log("Bad data: " + msg.data);
@@ -48,9 +46,8 @@ function draw() {
             translate(startX + col * spacing, startY + row * spacing, 0);
             if (maxes[idx] !== undefined && maxes[idx] !== "") {
                 let val = maxes[idx];
-                let size = 5 + val / 255 * 500;
                 fill(100, 150, 240);
-                sphere(size);
+                sphere(5 + val / 255 * 500);
             } else {
                 // Draw a placeholder if no data exists.
                 noFill();

@@ -31,6 +31,8 @@ def display_level(level):
 radio.on()
 radio.config(group=1)
 
+last_message = None
+
 while True:
     if button_a.was_pressed():  # Toggle adjust mode
         adjust_mode = not adjust_mode
@@ -41,25 +43,16 @@ while True:
         y = update_coord(y, accelerometer.get_y() / 1023 * TILT_SENSITIVITY)
         show_coords()
     else:
-        levels = []
-        start_time = running_time()
-
-        while running_time() - start_time < 500:
-            levels.append(microphone.sound_level())
-            sleep(50)
-
-        num_levels = len(levels)
-        mean_level = sum(levels) / num_levels
-        max_level = max(levels)
-        display_level(max_level)
-
+        level = microphone.sound_level()
+        display_level(level)
         message = ','.join(str(item) for item in
                            (round(x),
                             round(y),
-                            num_levels,
-                            min(levels),
-                            mean_level,
-                            max_level
+                            level,
                             ))
-        print(message)
-        radio.send(message)
+        if message != last_message:
+            last_message = message
+            print(message)
+            radio.send(message)
+
+        sleep(50)

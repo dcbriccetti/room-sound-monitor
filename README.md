@@ -6,7 +6,7 @@ Uses multiple micro:bits, and p5.js to monitor and display sound levels at vario
 
 ### sound-sampler.py
 This runs on multiple micro:bits placed around the room where you want to monitor sound.
-Every half-second or so it sends sound level data (min, mean, max) by radio to the aggregator
+Many times per second it sends its sound level by radio to the aggregator
 micro:bit.
 
 ### aggregator.py

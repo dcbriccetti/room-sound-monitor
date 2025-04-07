@@ -10,19 +10,19 @@ function setup() {
     // Connect to the Flask-SocketIO server.
     socket = io.connect('http://127.0.0.1:5000');
 
-    socket.on('data', msg => {
-        const items = msg.data.split(',');
+    socket.on('level change', msg => {
+        const items = msg.location_level.split(',');
         const missing = items.some(item => item === '');
         if (items.length === 4 && !missing) {
             const locX = Number(items[0]);
             const locY = Number(items[1]);
             if ([locX, locY].some(item => isNaN(item) || item < 0 || item > 4)) {
-                console.log("Bad data: " + msg.data);
+                console.log("Bad data: " + msg.location_level);
             } else {
                 maxes[locX + locY * LEDS_PER_ROW] = Number(items[2]);
             }
         } else {
-            console.log("Bad data: " + msg.data);
+            console.log("Bad data: " + msg.location_level);
         }
     });
 }

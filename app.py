@@ -20,9 +20,8 @@ def read_and_push_aggregated_samples():
     while True:
         if ubit_serial.in_waiting > 0:
             try:
-                line = ubit_serial.readline().decode('utf-8').strip()
-                print(line)
-                socketio.emit('data', {'data': line})
+                location_level = ubit_serial.readline().decode('utf-8').strip()
+                socketio.emit('level change', {'location_level': location_level})
             except Exception as e:
                 print("Error reading line:", e)
         socketio.sleep(0.15)

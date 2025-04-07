@@ -2,8 +2,8 @@ from microbit import *
 import radio
 from random import randint
 
-SEND_DELAY_MIN = 30
-SEND_DELAY_MAX = 50
+INTER_SAMPLE_DELAY = 10
+SEND_DELAY_RANGE = 200, 210
 LOCATION_BRIGHTNESS = 9
 LEVEL_BRIGHTNESS = 5
 TILT_SENSITIVITY = 0.01
@@ -63,13 +63,17 @@ while True:
         loc.update_from_tilt()
         continue
 
-    level = microphone.sound_level()
-    display_level(level)
+    highest_level = 0
+    for n in range(10):
+        level = microphone.sound_level()
+        if level > highest_level:
+            highest_level = level
+        sleep(INTER_SAMPLE_DELAY)
+    display_level(highest_level)
     display.set_pixel(round(loc.x), round(loc.y), LOCATION_BRIGHTNESS)
-    message = ','.join(str(item) for item in (loc.rx(), loc.ry(), level))
+    message = ','.join(str(item) for item in (loc.rx(), loc.ry(), highest_level))
     if message != last_message:
         last_message = message
-        print(message)
         radio.send(message)
 
-    sleep(randint(SEND_DELAY_MIN, SEND_DELAY_MAX))  # Randomize to hopefully reduce radio collisions
+    sleep(randint(*SEND_DELAY_RANGE))  # Randomize to hopefully reduce radio collisions

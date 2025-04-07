@@ -3,6 +3,8 @@
 from microbit import *
 import radio
 
+PREFIX_LEN = 3  # receive_full includes extra bytes
+
 radio.on()
 radio.config(group=1)
 
@@ -10,4 +12,4 @@ while True:
     message = radio.receive_full()
     if message:
         contents, strength, _ = message
-        print('%s,%d' % (contents[3:].decode('utf8'), strength))
+        print('%s,%d' % (contents[PREFIX_LEN:].decode('utf8'), strength))

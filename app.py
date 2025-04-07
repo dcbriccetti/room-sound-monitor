@@ -4,6 +4,7 @@
 
 import eventlet
 eventlet.monkey_patch()
+import glob
 import serial
 import time
 from flask import Flask, render_template
@@ -12,7 +13,16 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
 
-ubit_serial = serial.Serial('/dev/tty.usbmodem102', 115200, timeout=0.5)
+def find_microbit_port():
+    ports = glob.glob('/dev/tty.usbmodem*')
+    if ports:
+        return ports[0]
+    else:
+        raise Exception("No micro:bit device found.")
+
+port = find_microbit_port()
+ubit_serial = serial.Serial(port, 115200, timeout=0.5)
+print("Using port:", port)
 time.sleep(2)
 
 def read_and_push_aggregated_samples():

@@ -1,23 +1,36 @@
 from microbit import *
 import radio
+from random import randint
 
-TILT_SENSITIVITY = 0.01  # Something between 0 and 1 to slow down a bit
+SEND_DELAY_MIN = 30
+SEND_DELAY_MAX = 50
+LOCATION_BRIGHTNESS = 9
+LEVEL_BRIGHTNESS = 5
+TILT_SENSITIVITY = 0.01
+
 adjust_mode = True
 
 class Location:
     def __init__(self):
         self.x = 2.0
         self.y = 2.0
-        self.prev_x = 0
-        self.prev_y = 0
+        self.prev_rx = None
+        self.prev_ry = None
+
+    def rx(self):
+        return round(self.x)
+
+    def ry(self):
+        return round(self.y)
 
     def show_coords(self):
-        if round(self.x) == self.prev_x and round(self.y) == self.prev_y:
+        if self.rx() == self.prev_rx and self.ry() == self.prev_ry:
             return
-        display.set_pixel(self.prev_x, self.prev_y, 0)
-        display.set_pixel(round(self.x), round(self.y), 9)
-        self.prev_x = round(self.x)
-        self.prev_y = round(self.y)
+        if self.prev_rx is not None:
+            display.set_pixel(self.prev_rx, self.prev_ry, 0)
+        display.set_pixel(self.rx(), self.ry(), 9)
+        self.prev_rx = self.rx()
+        self.prev_ry = self.ry()
 
     def update_from_tilt(self):
         self.x = self.constrain(self.x + accelerometer.get_x() / 1023 * TILT_SENSITIVITY)
@@ -29,11 +42,11 @@ class Location:
         return min(max(value, lower), upper)
 
 def display_level(level):
-    num_graph_leds = round(level / 255.0 * 25)
+    num_graph_leds = int(level / 255.0 * 25)
     led_num = 0
     for y in range(4, -1, -1):  # bottom to top
         for x in range(5):      # left to right
-            display.set_pixel(x, y, 5 if led_num <= num_graph_leds else 0)
+            display.set_pixel(x, y, LEVEL_BRIGHTNESS if led_num <= num_graph_leds else 0)
             led_num += 1
 
 loc = Location()
@@ -46,17 +59,17 @@ while True:
     if button_a.was_pressed():  # Toggle adjust mode
         adjust_mode = not adjust_mode
 
-    # If adjust mode is on, update coordinates based on tilt.
     if adjust_mode:
         loc.update_from_tilt()
         continue
 
     level = microphone.sound_level()
     display_level(level)
-    message = ','.join(str(item) for item in (round(loc.x), round(loc.y), level))
+    display.set_pixel(round(loc.x), round(loc.y), LOCATION_BRIGHTNESS)
+    message = ','.join(str(item) for item in (loc.rx(), loc.ry(), level))
     if message != last_message:
         last_message = message
         print(message)
         radio.send(message)
 
-    sleep(50)
+    sleep(randint(SEND_DELAY_MIN, SEND_DELAY_MAX))  # Randomize to hopefully reduce radio collisions

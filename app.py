@@ -6,12 +6,8 @@ import eventlet
 eventlet.monkey_patch()
 import glob
 import serial
-import time
 from flask import Flask, render_template
 from flask_socketio import SocketIO
-app = Flask(__name__, template_folder='templates', static_folder='static')
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
 
 def find_microbit_port():
     ports = glob.glob('/dev/tty.usbmodem*')
@@ -19,11 +15,6 @@ def find_microbit_port():
         return ports[0]
     else:
         raise Exception("No micro:bit device found.")
-
-port = find_microbit_port()
-ubit_serial = serial.Serial(port, 115200, timeout=0.5)
-print("Using port:", port)
-time.sleep(2)
 
 def read_and_push_aggregated_samples():
     while True:
@@ -36,6 +27,10 @@ def read_and_push_aggregated_samples():
                 print("Error reading line:", e)
         socketio.sleep(0.15)
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -44,6 +39,9 @@ def index():
 def handle_connect():
     print("Client connected")
 
-if __name__ == '__main__':
-    socketio.start_background_task(read_and_push_aggregated_samples)
-    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
+port = find_microbit_port()
+print("Using port:", port)
+ubit_serial = serial.Serial(port, 115200, timeout=0.5)
+
+socketio.start_background_task(read_and_push_aggregated_samples)
+socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

@@ -7,7 +7,7 @@ eventlet.monkey_patch()
 import glob
 import serial
 import logging
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 
 def find_microbit_port() -> str:
@@ -54,7 +54,7 @@ def index() -> str:
 
 @socketio.on('connect')
 def handle_connect() -> None:
-    logging.info("Client connected")
+    logging.info(f"Client connected from IP: {request.remote_addr}")
 
 port = find_microbit_port()
 logging.info(f"Using port: {port}")

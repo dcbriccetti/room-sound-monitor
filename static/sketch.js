@@ -99,14 +99,14 @@ function setup() {
         const items = msg.location_level.split(',');
         const missing = items.some(item => item === '');
 
-        if (items.length !== 4 || missing) {
+        if (items.length !== 5 || missing) {
             console.log("Bad data format: " + msg.location_level);
             return;
         }
 
         const locX = Number(items[0]);
         const locY = Number(items[1]);
-        const level = Number(items[2]);
+        const level = Number(items[3]);
 
         if (isNaN(locX) || locX < 0 || locX >= LEDS_PER_ROW ||
             isNaN(locY) || locY < 0 || locY >= NUM_LED_ROWS ||

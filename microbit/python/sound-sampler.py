@@ -4,7 +4,7 @@ from random import randint
 
 NUM_SAMPLES_IN_BURST = 10
 INTER_SAMPLE_DELAY = 10
-SEND_DELAY_RANGE = 200, 210
+SEND_DELAY_RANGE = 300, 350
 LOCATION_BRIGHTNESS = 9
 LEVEL_BRIGHTNESS = 5
 TILT_SENSITIVITY = 0.01
@@ -24,7 +24,7 @@ class Location:
     def ry(self) -> int:
         return round(self.y)
 
-    def update_from_tilt(self) -> None:
+    def update_location_from_tilt(self) -> None:
         self.x = self.constrain(self.x + accelerometer.get_x() / 1023 * TILT_SENSITIVITY)
         self.y = self.constrain(self.y + accelerometer.get_y() / 1023 * TILT_SENSITIVITY)
 
@@ -67,23 +67,24 @@ def main() -> None:
     radio.on()
     radio.config(group=1)
 
-    last_message = None
+    last_level = None
+    sequence_number = 1
 
     while True:
         if button_a.was_pressed():  # Toggle adjust mode
             adjust_mode = not adjust_mode
 
         if adjust_mode:
-            loc.update_from_tilt()
+            loc.update_location_from_tilt()
             continue
 
         level = highest_level_from_multiple_samples()
         display_sound_level_graph(level)
         display.set_pixel(loc.rx(), loc.ry(), LOCATION_BRIGHTNESS)
-        message = ','.join(str(item) for item in (loc.rx(), loc.ry(), level))
-        if message != last_message:
-            last_message = message
-            radio.send(message)
+        if level != last_level:
+            last_level = level
+            radio.send(','.join(str(item) for item in [loc.rx(), loc.ry(), sequence_number, level]))
+            sequence_number += 1
 
         sleep(randint(*SEND_DELAY_RANGE))  # Randomize to hopefully reduce radio collisions
 

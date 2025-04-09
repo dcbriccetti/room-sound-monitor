@@ -72,7 +72,7 @@ function updateScale() {
 }
 
 function setup() {
-    frameRate(10);
+    // frameRate(4);
 
     const initialSize = calculateCanvasSize();
     const canvas = createCanvas(initialSize, initialSize);
@@ -92,30 +92,14 @@ function setup() {
     });
 
     socket.on('level change', msg => {
-        if (!msg || typeof msg.location_level !== 'string') {
-            console.log("Received invalid message:", msg);
-            return;
-        }
-        const items = msg.location_level.split(',');
-        const missing = items.some(item => item === '');
-
-        if (items.length !== 5 || missing) {
-            console.log("Bad data format: " + msg.location_level);
-            return;
-        }
-
-        const locX = Number(items[0]);
-        const locY = Number(items[1]);
-        const level = Number(items[3]);
-
-        if (isNaN(locX) || locX < 0 || locX >= LEDS_PER_ROW ||
-            isNaN(locY) || locY < 0 || locY >= NUM_LED_ROWS ||
-            isNaN(level)) {
+        if (isNaN(msg.x) || msg.x < 0 || msg.x >= LEDS_PER_ROW ||
+            isNaN(msg.y) || msg.y < 0 || msg.y >= NUM_LED_ROWS ||
+            isNaN(msg.level)) {
             console.log("Bad data values (NaN or out of bounds): " + msg.location_level);
             return;
         }
 
-        collected.add(locX + locY * LEDS_PER_ROW, level);
+        collected.add(msg.x + msg.y * LEDS_PER_ROW, msg.level);
     });
 
     socket.on('connect_error', (err) => {

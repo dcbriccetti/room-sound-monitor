@@ -11,14 +11,16 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 
 def find_microbit_port() -> str:
-    ports = glob.glob('/dev/tty.usbmodem*')
-    if ports:
+    if ports := glob.glob('/dev/tty.usbmodem*'):
         return ports[0]
-    else:
-        raise Exception("No micro:bit device found.")
-
+    raise Exception("No micro:bit device found.")
 
 def read_and_push_aggregated_samples() -> None:
+    port = find_microbit_port()
+    logging.info(f"Using port: {port}")
+    ubit_serial = serial.Serial(port, 115200, timeout=0.5)
+    ubit_serial.write('slow'.encode())
+
     last_sequence_numbers = {}  # Dictionary to store the last sequence number for each (x, y)
 
     while True:
@@ -55,10 +57,6 @@ def index() -> str:
 @socketio.on('connect')
 def handle_connect() -> None:
     logging.info(f"Client connected from IP: {request.remote_addr}")
-
-port = find_microbit_port()
-logging.info(f"Using port: {port}")
-ubit_serial = serial.Serial(port, 115200, timeout=0.5)
 
 socketio.start_background_task(read_and_push_aggregated_samples)
 socketio.run(app, debug=False, allow_unsafe_werkzeug=True)  # debug=True causes errors with serial reading, and with dict corruption

@@ -26,7 +26,7 @@ def read_and_push_aggregated_samples() -> None:
     while True:
         if ubit_serial.in_waiting > 0:
             try:
-                level_msg = ubit_serial.readline().decode('utf-8').strip()
+                level_msg = ubit_serial.readline().decode().strip()
                 logging.debug(level_msg)
                 parts = level_msg.split(",")
                 if len(parts) != 5:

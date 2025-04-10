@@ -12,7 +12,7 @@ while True:
     message = radio.receive_full()
     if message:
         contents, strength, _ = message
-        print('%s,%d' % (contents[PREFIX_LEN:].decode('utf8'), strength))
+        print('%s,%d' % (contents[PREFIX_LEN:].decode(), strength))
 
     if uart.any():
         line = uart.readline()

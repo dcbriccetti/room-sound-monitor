@@ -45,7 +45,8 @@ def read_and_push_aggregated_samples() -> None:
                 logging.error(f"Error reading line: {e}")
         socketio.sleep(0.01)
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(message)s')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
